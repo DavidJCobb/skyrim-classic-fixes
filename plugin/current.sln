@@ -1,0 +1,52 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{B5CB3BAA-5D3B-405C-A46B-5182F0EA2D25}") = "CobbBugFixes", "CobbBugFixes\CobbBugFixes.vcxproj", "{DE7BFCB6-EDBD-47A9-B452-9F9EA57D6D38}"
+	ProjectSection(ProjectDependencies) = postProject
+		{20C6411C-596F-4B85-BE4E-8BC91F59D8A6} = {20C6411C-596F-4B85-BE4E-8BC91F59D8A6}
+		{AA0365EC-47EA-45AA-BB1F-EBBCCCC466F2} = {AA0365EC-47EA-45AA-BB1F-EBBCCCC466F2}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "common", "common\common.vcxproj", "{20C6411C-596F-4B85-BE4E-8BC91F59D8A6}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "skse", "skse\skse.vcxproj", "{AA0365EC-47EA-45AA-BB1F-EBBCCCC466F2}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CobbSkyrimRE", "F:\CobbVS\SkyrimRE\CobbSkyrimRE.vcxitems", "{45D41ACC-2C3C-43D2-BC10-02AA73FFC7C7}"
+EndProject
+Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		F:\CobbVS\SkyrimRE\CobbSkyrimRE.vcxitems*{45d41acc-2c3c-43d2-bc10-02aa73ffc7c7}*SharedItemsImports = 9
+		F:\CobbVS\SkyrimRE\CobbSkyrimRE.vcxitems*{de7bfcb6-edbd-47a9-b452-9f9ea57d6d38}*SharedItemsImports = 4
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DE7BFCB6-EDBD-47A9-B452-9F9EA57D6D38}.Debug|x64.ActiveCfg = Debug|Win32
+		{DE7BFCB6-EDBD-47A9-B452-9F9EA57D6D38}.Debug|x86.ActiveCfg = Debug|Win32
+		{DE7BFCB6-EDBD-47A9-B452-9F9EA57D6D38}.Debug|x86.Build.0 = Debug|Win32
+		{DE7BFCB6-EDBD-47A9-B452-9F9EA57D6D38}.Release|x64.ActiveCfg = Release|Win32
+		{DE7BFCB6-EDBD-47A9-B452-9F9EA57D6D38}.Release|x86.ActiveCfg = Release|Win32
+		{DE7BFCB6-EDBD-47A9-B452-9F9EA57D6D38}.Release|x86.Build.0 = Release|Win32
+		{20C6411C-596F-4B85-BE4E-8BC91F59D8A6}.Debug|x64.ActiveCfg = Debug|Win32
+		{20C6411C-596F-4B85-BE4E-8BC91F59D8A6}.Debug|x86.ActiveCfg = Debug|Win32
+		{20C6411C-596F-4B85-BE4E-8BC91F59D8A6}.Debug|x86.Build.0 = Debug|Win32
+		{20C6411C-596F-4B85-BE4E-8BC91F59D8A6}.Release|x64.ActiveCfg = Release|Win32
+		{20C6411C-596F-4B85-BE4E-8BC91F59D8A6}.Release|x86.ActiveCfg = Release|Win32
+		{20C6411C-596F-4B85-BE4E-8BC91F59D8A6}.Release|x86.Build.0 = Release|Win32
+		{AA0365EC-47EA-45AA-BB1F-EBBCCCC466F2}.Debug|x64.ActiveCfg = Debug|Win32
+		{AA0365EC-47EA-45AA-BB1F-EBBCCCC466F2}.Debug|x86.ActiveCfg = Debug|Win32
+		{AA0365EC-47EA-45AA-BB1F-EBBCCCC466F2}.Debug|x86.Build.0 = Debug|Win32
+		{AA0365EC-47EA-45AA-BB1F-EBBCCCC466F2}.Release|x64.ActiveCfg = Release|Win32
+		{AA0365EC-47EA-45AA-BB1F-EBBCCCC466F2}.Release|x86.ActiveCfg = Release|Win32
+		{AA0365EC-47EA-45AA-BB1F-EBBCCCC466F2}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
