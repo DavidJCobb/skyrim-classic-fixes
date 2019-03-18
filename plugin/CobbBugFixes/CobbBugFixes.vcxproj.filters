@@ -33,6 +33,12 @@
     <ClCompile Include="Patches\ArcheryDownwardArrowFix.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Patches\UnderwaterAmbienceCellBoundaryFix.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Services\INI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def">
@@ -53,6 +59,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Patches\ArcheryDownwardArrowFix.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Patches\UnderwaterAmbienceCellBoundaryFix.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Services\INI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -7,15 +7,17 @@
 #pragma comment( lib, "psapi.lib" ) // needed for PSAPI to link properly
 #include <string>
 
+#include "Services/INI.h"
 #include "Patches/Exploratory.h"
 #include "Patches/ArcheryDownwardArrowFix.h"
+#include "Patches/UnderwaterAmbienceCellBoundaryFix.h"
 #include "Patches/VampireFeedSoftlock.h"
 
 PluginHandle			   g_pluginHandle = kPluginHandle_Invalid;
 SKSEMessagingInterface* g_ISKSEMessaging = nullptr;
 
 static const char*  g_pluginName = "CobbBugFixes";
-const UInt32 g_pluginVersion = 0x01000000; // 0xAABBCCDD = AA.BB.CC.DD with values converted to decimal // major.minor.update.internal-build-or-zero
+const UInt32 g_pluginVersion = 0x01010000; // 0xAABBCCDD = AA.BB.CC.DD with values converted to decimal // major.minor.update.internal-build-or-zero
 
 extern "C" {
    //
@@ -80,9 +82,11 @@ extern "C" {
    //
    bool SKSEPlugin_Load(const SKSEInterface* skse) {
       _MESSAGE("Load.");
+      CobbBugFixes::INISettingManager::GetInstance().Load();
       {  // Patches:
          CobbBugFixes::Patches::Exploratory::Apply();
          CobbBugFixes::Patches::ArcheryDownwardArrowFix::Apply();
+         CobbBugFixes::Patches::UnderwaterAmbienceCellBoundaryFix::Apply();
          CobbBugFixes::Patches::VampireFeedSoftlock::Apply();
       }
       return true;

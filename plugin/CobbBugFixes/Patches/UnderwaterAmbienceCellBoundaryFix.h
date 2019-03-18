@@ -2,7 +2,7 @@
 
 namespace CobbBugFixes {
    namespace Patches {
-      namespace ArcheryDownwardArrowFix {
+      namespace UnderwaterAmbienceCellBoundaryFix {
          void Apply();
       }
    }

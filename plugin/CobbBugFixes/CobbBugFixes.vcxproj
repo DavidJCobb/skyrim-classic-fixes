@@ -1,21 +1,21 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project InitialTargets="Fix" DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-   <Import Project="$(MSBuildProjectExtensionsPath)$(MSBuildProjectFile).*.targets" />
-   <!-- ================ UNDUPOBJ ================ -->
-   <!-- relevant topics -->
-   <!-- https://stackoverflow.com/questions/3729515/visual-studio-2010-2008-cant-handle-source-files-with-identical-names-in-diff/26935613 -->
-   <!-- https://stackoverflow.com/questions/7033855/msvc10-mp-builds-not-multicore-across-folders-in-a-project -->
-   <!-- https://stackoverflow.com/questions/18304911/how-can-one-modify-an-itemdefinitiongroup-from-an-msbuild-target -->
-   <!-- other maybe related info -->
-   <!-- https://stackoverflow.com/questions/841913/modify-msbuild-itemgroup-metadata -->
-   <UsingTask TaskName="UNDUPOBJ_TASK" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
-     <ParameterGroup>
-       <OutputDir ParameterType="System.String" Required="true" />
-       <ItemList ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
-       <OutputItemList ParameterType="Microsoft.Build.Framework.ITaskItem[]" Output="true" />
-     </ParameterGroup>
-     <Task>
-       <Code><![CDATA[
+  <Import Project="$(MSBuildProjectExtensionsPath)$(MSBuildProjectFile).*.targets" />
+  <!-- ================ UNDUPOBJ ================ -->
+  <!-- relevant topics -->
+  <!-- https://stackoverflow.com/questions/3729515/visual-studio-2010-2008-cant-handle-source-files-with-identical-names-in-diff/26935613 -->
+  <!-- https://stackoverflow.com/questions/7033855/msvc10-mp-builds-not-multicore-across-folders-in-a-project -->
+  <!-- https://stackoverflow.com/questions/18304911/how-can-one-modify-an-itemdefinitiongroup-from-an-msbuild-target -->
+  <!-- other maybe related info -->
+  <!-- https://stackoverflow.com/questions/841913/modify-msbuild-itemgroup-metadata -->
+  <UsingTask TaskName="UNDUPOBJ_TASK" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
+    <ParameterGroup>
+      <OutputDir ParameterType="System.String" Required="true" />
+      <ItemList ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
+      <OutputItemList ParameterType="Microsoft.Build.Framework.ITaskItem[]" Output="true" />
+    </ParameterGroup>
+    <Task>
+      <Code><![CDATA[
 //
 // Normally, two CPP files in a project can't have the same filename even if 
 // they're in different folders, because the default settings for MSVC's linker 
@@ -61,22 +61,21 @@ foreach(var item in ItemList) {
 OutputItemList = ItemList;
 ItemList = new Microsoft.Build.Framework.ITaskItem[0];
      ]]></Code>
-     </Task>
-   </UsingTask>
-
-   <Target Name="Fix">
-     <Message Text="This is the BeforeBuild target" Importance="normal"/>
-     <!-- see stackoverflow topics for discussion on why we need to do some loopy copying stuff here -->
-     <ItemGroup>
-       <ClCompileCopy Include="@(ClCompile)"/>
-       <ClCompile Remove="@(ClCompile)"/>
-     </ItemGroup>
-     <UNDUPOBJ_TASK OutputDir="$(IntDir)" ItemList="@(ClCompileCopy)" OutputItemList="@(ClCompile)">
-       <Output ItemName="ClCompile" TaskParameter="OutputItemList"/>
-     </UNDUPOBJ_TASK>
-     <Message Text="This is the BeforeBuild target" Importance="normal"/>
-   </Target>
-   <!-- ================ UNDUPOBJ ================ -->
+    </Task>
+  </UsingTask>
+  <Target Name="Fix">
+    <Message Text="This is the BeforeBuild target" Importance="normal" />
+    <!-- see stackoverflow topics for discussion on why we need to do some loopy copying stuff here -->
+    <ItemGroup>
+      <ClCompileCopy Include="@(ClCompile)" />
+      <ClCompile Remove="@(ClCompile)" />
+    </ItemGroup>
+    <UNDUPOBJ_TASK OutputDir="$(IntDir)" ItemList="@(ClCompileCopy)" OutputItemList="@(ClCompile)">
+      <Output ItemName="ClCompile" TaskParameter="OutputItemList" />
+    </UNDUPOBJ_TASK>
+    <Message Text="This is the BeforeBuild target" Importance="normal" />
+  </Target>
+  <!-- ================ UNDUPOBJ ================ -->
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -191,7 +190,9 @@ ItemList = new Microsoft.Build.Framework.ITaskItem[0];
     <ClCompile Include="Patches\Exploratory.cpp" />
     <ClCompile Include="Patches\ExploratoryPatches\ArcheryBug.cpp" />
     <ClCompile Include="Patches\ExploratoryPatches\VampireFeedSoftlock.cpp" />
+    <ClCompile Include="Patches\UnderwaterAmbienceCellBoundaryFix.cpp" />
     <ClCompile Include="Patches\VampireFeedSoftlock.cpp" />
+    <ClCompile Include="Services\INI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def" />
@@ -201,7 +202,9 @@ ItemList = new Microsoft.Build.Framework.ITaskItem[0];
     <ClInclude Include="Patches\Exploratory.h" />
     <ClInclude Include="Patches\ExploratoryPatches\ArcheryBug.h" />
     <ClInclude Include="Patches\ExploratoryPatches\VampireFeedSoftlock.h" />
+    <ClInclude Include="Patches\UnderwaterAmbienceCellBoundaryFix.h" />
     <ClInclude Include="Patches\VampireFeedSoftlock.h" />
+    <ClInclude Include="Services\INI.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\skse\skse.vcxproj">
