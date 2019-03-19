@@ -17,7 +17,7 @@ PluginHandle			   g_pluginHandle = kPluginHandle_Invalid;
 SKSEMessagingInterface* g_ISKSEMessaging = nullptr;
 
 static const char*  g_pluginName = "CobbBugFixes";
-const UInt32 g_pluginVersion = 0x01010000; // 0xAABBCCDD = AA.BB.CC.DD with values converted to decimal // major.minor.update.internal-build-or-zero
+const UInt32 g_pluginVersion = 0x01010100; // 0xAABBCCDD = AA.BB.CC.DD with values converted to decimal // major.minor.update.internal-build-or-zero
 
 extern "C" {
    //
