@@ -23,8 +23,8 @@ namespace CobbBugFixes {
          __declspec(naked) void bhk_Outer() {
             _asm {
                mov  s_isAutoWaterCheck, 1;
-               mov  eax, 0x00632DF0;
-               call eax;
+               mov  eax, 0x00632DF0; // reproduce patched-over call to bool BGSWaterCollisionManager::BGSWaterUpdateI::Subroutine00632DF0(unknown)
+               call eax;             //
                mov  s_isAutoWaterCheck, 0;
                mov  ecx, 0x0063326A;
                jmp  ecx;
@@ -33,22 +33,50 @@ namespace CobbBugFixes {
 
          namespace UnderwaterFX {
             bool _stdcall Inner() {
-               if (!s_isAutoWaterCheck)
-                  return false;
+               constexpr bool ce_failureCaseValue = true;
+               //
+               // When this hook runs, the game thinks that the camera has just exited 
+               // cell water. Double-check the camera's position against the current 
+               // cell water height, and see if that's really true. If the camera is 
+               // actually still underwater, then return false to skip a call that would 
+               // disable underwater ambient sound and visuals.
+               //
+               if (!s_isAutoWaterCheck) // if this isn't the specific check we want to hook, then don't change anything
+                  return true;
+//_MESSAGE("Hooking a water-exit check...");
                auto player = *RE::g_thePlayer;
                auto camera = RE::PlayerCamera::GetInstance();
                if (!player || !camera)
-                  return false;
+                  return ce_failureCaseValue;
                auto cell = player->parentCell;
                if (!cell)
-                  return false;
+                  return ce_failureCaseValue;
                auto world = cell->parentWorld;
                if (!world)
-                  return false;
-               cell = CALL_MEMBER_FN(world, GetCellThatContainsPoint)(&camera->unkB4);
+                  return ce_failureCaseValue;
+               NiPoint3 pos(player->pos);
+               {
+                  if (camera->cameraNode) {
+                     pos = camera->cameraNode->m_worldTransform.pos;
+                  } else {
+                     //
+                     // This is accurate in some cases and WILDLY inaccurate in other 
+                     // cases. I don't know what causes it to be inaccurate, but picture 
+                     // a real camera height near 500 and a reported value of -50985.
+                     //
+                     CALL_MEMBER_FN(camera, GetUnkB4OrEquivalent)(pos);
+                  }
+               }
+               cell = CALL_MEMBER_FN(world, GetCellThatContainsPoint)(&pos);
+               //*/
                if (!cell)
-                  return false;
+                  //
+                  // Prefer the cell containing the camera position, but if that's 
+                  // not available, then use the player's cell.
+                  //
+                  cell = player->parentCell;
                float water = CALL_MEMBER_FN(cell, GetWaterLevel)();
+//_MESSAGE("Camera: %f\n Water: %f", pos.z, water);
                float camZ = camera->unkB4.z;
                return camZ >= water;
             }

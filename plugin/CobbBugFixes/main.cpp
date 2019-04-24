@@ -10,6 +10,7 @@
 #include "Services/INI.h"
 #include "Patches/Exploratory.h"
 #include "Patches/ArcheryDownwardArrowFix.h"
+#include "Patches/ArmorAddonMO5SFix.h"
 #include "Patches/UnderwaterAmbienceCellBoundaryFix.h"
 #include "Patches/VampireFeedSoftlock.h"
 
@@ -17,7 +18,7 @@ PluginHandle			   g_pluginHandle = kPluginHandle_Invalid;
 SKSEMessagingInterface* g_ISKSEMessaging = nullptr;
 
 static const char*  g_pluginName = "CobbBugFixes";
-const UInt32 g_pluginVersion = 0x01010100; // 0xAABBCCDD = AA.BB.CC.DD with values converted to decimal // major.minor.update.internal-build-or-zero
+const UInt32 g_pluginVersion = 0x01010200; // 0xAABBCCDD = AA.BB.CC.DD with values converted to decimal // major.minor.update.internal-build-or-zero
 
 extern "C" {
    //
@@ -86,6 +87,7 @@ extern "C" {
       {  // Patches:
          CobbBugFixes::Patches::Exploratory::Apply();
          CobbBugFixes::Patches::ArcheryDownwardArrowFix::Apply();
+         CobbBugFixes::Patches::ArmorAddonMO5SFix::Apply();
          CobbBugFixes::Patches::UnderwaterAmbienceCellBoundaryFix::Apply();
          CobbBugFixes::Patches::VampireFeedSoftlock::Apply();
       }
