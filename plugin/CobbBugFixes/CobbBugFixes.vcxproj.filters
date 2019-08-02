@@ -42,6 +42,9 @@
     <ClCompile Include="Patches\ArmorAddonMO5SFix.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Patches\MerchantRestockFix.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def">
@@ -71,6 +74,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Patches\ArmorAddonMO5SFix.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Patches\MerchantRestockFix.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

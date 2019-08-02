@@ -54,7 +54,7 @@ namespace CobbBugFixes {
                auto world = cell->parentWorld;
                if (!world)
                   return ce_failureCaseValue;
-               NiPoint3 pos(player->pos);
+               RE::NiPoint3 pos(player->pos);
                {
                   if (camera->cameraNode) {
                      pos = camera->cameraNode->m_worldTransform.pos;

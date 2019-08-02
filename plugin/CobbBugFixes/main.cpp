@@ -13,12 +13,18 @@
 #include "Patches/ArmorAddonMO5SFix.h"
 #include "Patches/UnderwaterAmbienceCellBoundaryFix.h"
 #include "Patches/VampireFeedSoftlock.h"
+#include "Patches/MerchantRestockFix.h"
 
-PluginHandle			   g_pluginHandle = kPluginHandle_Invalid;
-SKSEMessagingInterface* g_ISKSEMessaging = nullptr;
+PluginHandle			       g_pluginHandle   = kPluginHandle_Invalid;
+SKSEMessagingInterface*     g_ISKSEMessaging = nullptr;
+SKSESerializationInterface* g_serialization  = nullptr;
 
-static const char*  g_pluginName = "CobbBugFixes";
-const UInt32 g_pluginVersion = 0x01010200; // 0xAABBCCDD = AA.BB.CC.DD with values converted to decimal // major.minor.update.internal-build-or-zero
+static const char* g_pluginName = "CobbBugFixes";
+const UInt32 g_pluginVersion   = 0x01020000; // 0xAABBCCDD = AA.BB.CC.DD with values converted to decimal // major.minor.update.internal-build-or-zero
+const UInt32 g_serializationID = 'cBug';
+
+void Callback_Serialization_Save(SKSESerializationInterface* intfc);
+void Callback_Serialization_Load(SKSESerializationInterface* intfc);
 
 extern "C" {
    //
@@ -64,12 +70,22 @@ extern "C" {
          return false;
       }
       {  // Get the messaging interface and query its version.
-         g_ISKSEMessaging = (SKSEMessagingInterface *)skse->QueryInterface(kInterface_Messaging);
+         g_ISKSEMessaging = (SKSEMessagingInterface*)skse->QueryInterface(kInterface_Messaging);
          if (!g_ISKSEMessaging) {
             _MESSAGE("Couldn't get messaging interface.");
             return false;
          } else if (g_ISKSEMessaging->interfaceVersion < SKSEMessagingInterface::kInterfaceVersion) {
             _MESSAGE("Messaging interface too old (%d; we expected %d).", g_ISKSEMessaging->interfaceVersion, SKSEMessagingInterface::kInterfaceVersion);
+            return false;
+         }
+      }
+      {  // Get the serialization interface and query its version.
+         g_serialization = (SKSESerializationInterface*)skse->QueryInterface(kInterface_Serialization);
+         if (!g_serialization) {
+            _MESSAGE("Couldn't get serialization interface.");
+            return false;
+         } else if (g_serialization->version < SKSESerializationInterface::kVersion) {
+            _MESSAGE("Serialization interface too old (%d; we expected %d).", g_serialization->version, SKSESerializationInterface::kVersion);
             return false;
          }
       }
@@ -90,7 +106,44 @@ extern "C" {
          CobbBugFixes::Patches::ArmorAddonMO5SFix::Apply();
          CobbBugFixes::Patches::UnderwaterAmbienceCellBoundaryFix::Apply();
          CobbBugFixes::Patches::VampireFeedSoftlock::Apply();
+         MerchantRestockFixManager::applyHook();
+      }
+      {  // Serialization
+         g_serialization->SetUniqueID(g_pluginHandle, g_serializationID);
+         //g_serialization->SetRevertCallback(g_pluginHandle, Callback_Serialization_Revert);
+         g_serialization->SetSaveCallback  (g_pluginHandle, Callback_Serialization_Save);
+         g_serialization->SetLoadCallback  (g_pluginHandle, Callback_Serialization_Load);
       }
       return true;
    }
 };
+void Callback_Serialization_Save(SKSESerializationInterface* intfc) {
+   _MESSAGE("Saving...");
+   if (MerchantRestockFixManager::GetInstance().Save(intfc)) {
+      _MESSAGE("MerchantRestockFixManager saved successfully or had no data to save.");
+   } else {
+      _MESSAGE("MerchantRestockFixManager failed to save.");
+   }
+   _MESSAGE("Saving done!");
+}
+void Callback_Serialization_Load(SKSESerializationInterface* intfc) {
+   _MESSAGE("Loading...");
+   //
+   UInt32 type;    // This IS correct. A UInt32 and a four-character ASCII string have the same length (and can be read interchangeably, it seems).
+   UInt32 version;
+   UInt32 length;
+   bool   error = false;
+   //
+   while (!error && intfc->GetNextRecordInfo(&type, &version, &length)) {
+      switch (type) {
+         case MerchantRestockFixManager::recordSignature:
+            if (error = !MerchantRestockFixManager::GetInstance().Load(intfc, version))
+               _MESSAGE("MerchantRestockFixManager failed to load.");
+            else
+               _MESSAGE("MerchantRestockFixManager loaded.");
+            break;
+      }
+   }
+   //
+   _MESSAGE("Loading done!");
+}
