@@ -106,7 +106,6 @@ extern "C" {
          CobbBugFixes::Patches::ArmorAddonMO5SFix::Apply();
          CobbBugFixes::Patches::UnderwaterAmbienceCellBoundaryFix::Apply();
          CobbBugFixes::Patches::VampireFeedSoftlock::Apply();
-         MerchantRestockFixManager::applyHook();
       }
       {  // Serialization
          g_serialization->SetUniqueID(g_pluginHandle, g_serializationID);
@@ -119,10 +118,10 @@ extern "C" {
 };
 void Callback_Serialization_Save(SKSESerializationInterface* intfc) {
    _MESSAGE("Saving...");
-   if (MerchantRestockFixManager::GetInstance().Save(intfc)) {
-      _MESSAGE("MerchantRestockFixManager saved successfully or had no data to save.");
+   if (MerchantRestockFix::Save(intfc)) {
+      _MESSAGE("Saving complete (or no data to save) for the merchant restock fix.");
    } else {
-      _MESSAGE("MerchantRestockFixManager failed to save.");
+      _MESSAGE("Saving failed for the merchant restock fix.");
    }
    _MESSAGE("Saving done!");
 }
@@ -136,11 +135,11 @@ void Callback_Serialization_Load(SKSESerializationInterface* intfc) {
    //
    while (!error && intfc->GetNextRecordInfo(&type, &version, &length)) {
       switch (type) {
-         case MerchantRestockFixManager::recordSignature:
-            if (error = !MerchantRestockFixManager::GetInstance().Load(intfc, version))
-               _MESSAGE("MerchantRestockFixManager failed to load.");
+         case MerchantRestockFix::ce_recordSignature:
+            if (error = !MerchantRestockFix::Load(intfc, version))
+               _MESSAGE("Loading failed for the merchant restock fix.");
             else
-               _MESSAGE("MerchantRestockFixManager loaded.");
+               _MESSAGE("Loading complete for the merchant restock fix.");
             break;
       }
    }

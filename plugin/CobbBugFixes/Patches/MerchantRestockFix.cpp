@@ -1,88 +1,52 @@
 #include "MerchantRestockFix.h"
 #include "ReverseEngineered\Forms\TESFaction.h"
-#include "ReverseEngineered\Forms\TESObjectREFR.h"
-#include "ReverseEngineered\Systems\Timing.h"
-#include "ReverseEngineered\GameSettings.h"
+#include "ReverseEngineered\Systems/GameData.h"
 //
 #include "skse/SafeWrite.h"
 #include "skse/Serialization.h"
 #include "skse/GameRTTI.h"
 
-namespace Hook {
-   void _stdcall Inner(RE::TESFaction* faction) {
-      MerchantRestockFixManager::GetInstance().doRestockHandling(faction);
-   }
-   __declspec(naked) void Outer() {
-      _asm {
-         push ecx;
-         call Inner; // stdcall
-         retn;
+#include <vector>
+
+struct _TempEntry {
+   UInt32 formID;
+   UInt32 days;
+   //
+   _TempEntry(UInt32 a, UInt32 b) : formID(a), days(b) {}
+};
+
+bool MerchantRestockFix::Save(SKSESerializationInterface* intfc) {
+   using namespace Serialization;
+   //
+   auto  dh   = RE::DataHandler::GetSingleton();
+   auto& list = dh->factions;
+   //
+   std::vector<_TempEntry> map;
+   //
+   for (UInt32 i = 0; i < list.count; i++) {
+      auto faction = (RE::TESFaction*) list.arr.entries[i];
+      if (faction && faction->vendorData.merchantContainer) {
+         auto days = faction->vendorData.lastReset;
+         if (days != 0xFFFFFFFF)
+            map.emplace_back(faction->formID, days);
       }
    }
-}
-void MerchantRestockFixManager::applyHook() {
-   WriteRelJump(0x0055CF60, (UInt32)Hook::Outer); // overwrite TESFaction::DoMerchantRestockCheck
-}
-SInt32 MerchantRestockFixManager::getLastVisit(RE::TESFaction* faction) {
-   std::lock_guard<decltype(this->lock)> guard(this->lock);
-   //
-   auto& vendor = faction->vendorData;
-   auto& map    = this->lastVisit;
-   if (vendor.lastShoppedAt == -1) {
-      auto it = map.find(faction->formID);
-      if (it != map.end())
-         vendor.lastShoppedAt = it->second;
-   } else {
-      this->lastVisit[faction->formID] = vendor.lastShoppedAt;
-   }
-   return vendor.lastShoppedAt;
-}
-void MerchantRestockFixManager::setLastVisit(RE::TESFaction* faction, SInt32 days) {
-   std::lock_guard<decltype(this->lock)> guard(this->lock);
-   //
-   faction->vendorData.lastShoppedAt = days;
-   this->lastVisit[faction->formID] = days;
-}
-void MerchantRestockFixManager::doRestockHandling(RE::TESFaction* faction) {
-   std::lock_guard<decltype(this->lock)> guard(this->lock);
-   //
-   auto container = (RE::TESObjectREFR*) faction->vendorData.merchantContainer;
-   if (!container)
-      return;
-   auto& manager = MerchantRestockFixManager::GetInstance();
-   auto  today = CALL_MEMBER_FN(*RE::g_timeGlobals, GetGameDaysPassed)();
-   auto  last = manager.getLastVisit(faction);
-   if (last == -1)
-      return;
-   if ((today - last) > RE::GMST::iDaysToRespawnVendor->data.s32)
-      return;
-   manager.setLastVisit(faction, today);
-   container->ResetInventory(!CALL_MEMBER_FN(container, DoesRespawn)());
-}
-
-bool MerchantRestockFixManager::Save(SKSESerializationInterface* intfc) {
-   using namespace Serialization;
-   std::lock_guard<decltype(this->lock)> guard(this->lock);
-   //
-   UInt32 count = this->lastVisit.size();
+   auto count = map.size();
    if (!count)
       return true;
-   if (intfc->OpenRecord(MerchantRestockFixManager::recordSignature, kSaveVersion)) {
+   if (intfc->OpenRecord(ce_recordSignature, kSaveVersion)) {
       intfc->WriteRecordData(&count, sizeof(count));
-      for (auto it = this->lastVisit.begin(); it != this->lastVisit.end(); ++it) {
-         FormID id   = it->first;
-         SInt32 days = it->second;
+      for (auto it = map.begin(); it != map.end(); ++it) {
+         FormID id   = (*it).formID;
+         UInt32 days = (*it).days;
          WriteData(intfc, &id);
          WriteData(intfc, &days);
       }
    }
    return true;
 }
-bool MerchantRestockFixManager::Load(SKSESerializationInterface* intfc, UInt32 version) {
+bool MerchantRestockFix::Load(SKSESerializationInterface* intfc, UInt32 version) {
    using namespace Serialization;
-   std::lock_guard<decltype(this->lock)> guard(this->lock);
-   //
-   this->lastVisit.clear();
    //
    UInt32 count = 0;
    if (!ReadData(intfc, &count)) {
@@ -105,11 +69,7 @@ bool MerchantRestockFixManager::Load(SKSESerializationInterface* intfc, UInt32 v
          _MESSAGE(__FUNCTION__ ": Skipping form ID %08X; the mod that defined this faction appears to have changed, and the form ID is now being used by something else.");
          continue;
       }
-      this->lastVisit[id] = days;
+      faction->vendorData.lastReset = days;
    }
    return true;
-}
-void MerchantRestockFixManager::Revert() {
-   std::lock_guard<decltype(this->lock)> guard(this->lock);
-   this->lastVisit.clear();
 }
