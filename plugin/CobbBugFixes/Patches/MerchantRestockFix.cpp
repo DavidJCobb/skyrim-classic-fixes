@@ -1,6 +1,7 @@
 #include "MerchantRestockFix.h"
 #include "ReverseEngineered\Forms\TESFaction.h"
 #include "ReverseEngineered\Systems/GameData.h"
+#include "Services/INI.h"
 //
 #include "skse/SafeWrite.h"
 #include "skse/Serialization.h"
@@ -47,6 +48,9 @@ bool MerchantRestockFix::Save(SKSESerializationInterface* intfc) {
 }
 bool MerchantRestockFix::Load(SKSESerializationInterface* intfc, UInt32 version) {
    using namespace Serialization;
+   //
+   if (CobbBugFixes::INI::MerchantRestockFixes::Enabled.bCurrent == false)
+      return true;
    //
    UInt32 count = 0;
    if (!ReadData(intfc, &count)) {

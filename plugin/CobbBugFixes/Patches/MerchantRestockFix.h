@@ -3,9 +3,6 @@
 #include <mutex>
 #include "skse/PluginAPI.h"
 
-namespace RE {
-   class TESFaction;
-}
 namespace MerchantRestockFix {
    typedef UInt32 FormID;
    //
