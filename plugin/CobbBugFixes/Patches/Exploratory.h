@@ -1,4 +1,5 @@
 #pragma once
+#include "ExploratoryPatches/ModelLoadingTest.h"
 
 namespace CobbBugFixes {
    namespace Patches {

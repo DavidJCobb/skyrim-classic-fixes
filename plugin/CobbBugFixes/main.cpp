@@ -23,6 +23,7 @@ static const char* g_pluginName = "CobbBugFixes";
 const UInt32 g_pluginVersion   = 0x01020000; // 0xAABBCCDD = AA.BB.CC.DD with values converted to decimal // major.minor.update.internal-build-or-zero
 const UInt32 g_serializationID = 'cBug';
 
+void Callback_Messaging_SKSE(SKSEMessagingInterface::Message* message);
 void Callback_Serialization_Save(SKSESerializationInterface* intfc);
 void Callback_Serialization_Load(SKSESerializationInterface* intfc);
 
@@ -100,6 +101,7 @@ extern "C" {
    bool SKSEPlugin_Load(const SKSEInterface* skse) {
       _MESSAGE("Load.");
       CobbBugFixes::INISettingManager::GetInstance().Load();
+      g_ISKSEMessaging->RegisterListener(g_pluginHandle, "SKSE", Callback_Messaging_SKSE);
       {  // Patches:
          CobbBugFixes::Patches::Exploratory::Apply();
          CobbBugFixes::Patches::ArcheryDownwardArrowFix::Apply();
@@ -114,6 +116,16 @@ extern "C" {
          g_serialization->SetLoadCallback  (g_pluginHandle, Callback_Serialization_Load);
       }
       return true;
+   }
+};
+void Callback_Messaging_SKSE(SKSEMessagingInterface::Message* message) {
+   if (message->type == SKSEMessagingInterface::kMessage_PostLoad) {
+   } else if (message->type == SKSEMessagingInterface::kMessage_PostPostLoad) {
+   } else if (message->type == SKSEMessagingInterface::kMessage_DataLoaded) {
+   } else if (message->type == SKSEMessagingInterface::kMessage_NewGame) {
+   } else if (message->type == SKSEMessagingInterface::kMessage_PreLoadGame) {
+   } else if (message->type == SKSEMessagingInterface::kMessage_PostLoadGame) {
+      //CobbBugFixes::Patches::Exploratory::ModelLoadingTest::RunTest();
    }
 };
 void Callback_Serialization_Save(SKSESerializationInterface* intfc) {
