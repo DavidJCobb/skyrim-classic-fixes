@@ -9,7 +9,9 @@ namespace CobbBugFixes {
    //
    #define COBBBUGFIXES_MAKE_INI_SETTING(category, name, value) namespace category { extern INISetting name; };
    namespace INI {
-      COBBBUGFIXES_MAKE_INI_SETTING(MerchantRestockFixes,              Enabled, true);
+      COBBBUGFIXES_MAKE_INI_SETTING(CrashLogging, Enabled, false);
+      COBBBUGFIXES_MAKE_INI_SETTING(MerchantRestockFixes, Enabled, true);
+      COBBBUGFIXES_MAKE_INI_SETTING(NPCTorchLandscapeFix, Enabled, true);
       COBBBUGFIXES_MAKE_INI_SETTING(UnderwaterAmbienceCellBoundaryFix, Enabled, true);
    };
    #undef COBBBUGFIXES_MAKE_INI_SETTING

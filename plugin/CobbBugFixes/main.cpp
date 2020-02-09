@@ -8,19 +8,21 @@
 #include <string>
 
 #include "Services/INI.h"
+#include "Services/CrashLog.h"
 #include "Patches/Exploratory.h"
 #include "Patches/ArcheryDownwardArrowFix.h"
 #include "Patches/ArmorAddonMO5SFix.h"
 #include "Patches/UnderwaterAmbienceCellBoundaryFix.h"
 #include "Patches/VampireFeedSoftlock.h"
 #include "Patches/MerchantRestockFix.h"
+#include "Patches/NPCTorchLandscapeFix.h"
 
 PluginHandle			       g_pluginHandle   = kPluginHandle_Invalid;
 SKSEMessagingInterface*     g_ISKSEMessaging = nullptr;
 SKSESerializationInterface* g_serialization  = nullptr;
 
 static const char* g_pluginName = "CobbBugFixes";
-const UInt32 g_pluginVersion   = 0x01020000; // 0xAABBCCDD = AA.BB.CC.DD with values converted to decimal // major.minor.update.internal-build-or-zero
+const UInt32 g_pluginVersion   = 0x01040000; // 0xAABBCCDD = AA.BB.CC.DD with values converted to decimal // major.minor.update.internal-build-or-zero
 const UInt32 g_serializationID = 'cBug';
 
 void Callback_Messaging_SKSE(SKSEMessagingInterface::Message* message);
@@ -100,6 +102,7 @@ extern "C" {
    //
    bool SKSEPlugin_Load(const SKSEInterface* skse) {
       _MESSAGE("Load.");
+      SetupCrashLogging();
       CobbBugFixes::INISettingManager::GetInstance().Load();
       g_ISKSEMessaging->RegisterListener(g_pluginHandle, "SKSE", Callback_Messaging_SKSE);
       {  // Patches:
@@ -108,6 +111,7 @@ extern "C" {
          CobbBugFixes::Patches::ArmorAddonMO5SFix::Apply();
          CobbBugFixes::Patches::UnderwaterAmbienceCellBoundaryFix::Apply();
          CobbBugFixes::Patches::VampireFeedSoftlock::Apply();
+         CobbBugFixes::Patches::NPCTorchLandscapeFix::Apply();
       }
       {  // Serialization
          g_serialization->SetUniqueID(g_pluginHandle, g_serializationID);
@@ -121,6 +125,7 @@ extern "C" {
 void Callback_Messaging_SKSE(SKSEMessagingInterface::Message* message) {
    if (message->type == SKSEMessagingInterface::kMessage_PostLoad) {
    } else if (message->type == SKSEMessagingInterface::kMessage_PostPostLoad) {
+      SetupCrashLogging();
    } else if (message->type == SKSEMessagingInterface::kMessage_DataLoaded) {
    } else if (message->type == SKSEMessagingInterface::kMessage_NewGame) {
    } else if (message->type == SKSEMessagingInterface::kMessage_PreLoadGame) {
@@ -140,7 +145,7 @@ void Callback_Serialization_Save(SKSESerializationInterface* intfc) {
 void Callback_Serialization_Load(SKSESerializationInterface* intfc) {
    _MESSAGE("Loading...");
    //
-   UInt32 type;    // This IS correct. A UInt32 and a four-character ASCII string have the same length (and can be read interchangeably, it seems).
+   UInt32 type;
    UInt32 version;
    UInt32 length;
    bool   error = false;

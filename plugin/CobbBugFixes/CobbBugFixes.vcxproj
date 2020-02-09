@@ -193,8 +193,11 @@ ItemList = new Microsoft.Build.Framework.ITaskItem[0];
     <ClCompile Include="Patches\ExploratoryPatches\ModelLoadingTest.cpp" />
     <ClCompile Include="Patches\ExploratoryPatches\VampireFeedSoftlock.cpp" />
     <ClCompile Include="Patches\MerchantRestockFix.cpp" />
+    <ClCompile Include="Patches\NPCTorchLandscapeFix.cpp" />
     <ClCompile Include="Patches\UnderwaterAmbienceCellBoundaryFix.cpp" />
     <ClCompile Include="Patches\VampireFeedSoftlock.cpp" />
+    <ClCompile Include="Services\CrashLog.cpp" />
+    <ClCompile Include="Services\CrashLogDefinitions.cpp" />
     <ClCompile Include="Services\INI.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -208,14 +211,21 @@ ItemList = new Microsoft.Build.Framework.ITaskItem[0];
     <ClInclude Include="Patches\ExploratoryPatches\ModelLoadingTest.h" />
     <ClInclude Include="Patches\ExploratoryPatches\VampireFeedSoftlock.h" />
     <ClInclude Include="Patches\MerchantRestockFix.h" />
+    <ClInclude Include="Patches\NPCTorchLandscapeFix.h" />
     <ClInclude Include="Patches\UnderwaterAmbienceCellBoundaryFix.h" />
     <ClInclude Include="Patches\VampireFeedSoftlock.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="Services\CrashLog.h" />
+    <ClInclude Include="Services\CrashLogDefinitions.h" />
     <ClInclude Include="Services\INI.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\skse\skse.vcxproj">
       <Project>{7e0e2d11-eaeb-4404-8d77-ca3572c8680e}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="CobbBugFixes.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
