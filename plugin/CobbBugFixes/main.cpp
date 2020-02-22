@@ -16,13 +16,14 @@
 #include "Patches/VampireFeedSoftlock.h"
 #include "Patches/MerchantRestockFix.h"
 #include "Patches/NPCTorchLandscapeFix.h"
+#include "Patches/CrashFixes.h"
 
 PluginHandle			       g_pluginHandle   = kPluginHandle_Invalid;
 SKSEMessagingInterface*     g_ISKSEMessaging = nullptr;
 SKSESerializationInterface* g_serialization  = nullptr;
 
 static const char* g_pluginName = "CobbBugFixes";
-const UInt32 g_pluginVersion   = 0x01040000; // 0xAABBCCDD = AA.BB.CC.DD with values converted to decimal // major.minor.update.internal-build-or-zero
+const UInt32 g_pluginVersion   = 0x01040100; // 0xAABBCCDD = AA.BB.CC.DD with values converted to decimal // major.minor.update.internal-build-or-zero
 const UInt32 g_serializationID = 'cBug';
 
 void Callback_Messaging_SKSE(SKSEMessagingInterface::Message* message);
@@ -112,6 +113,7 @@ extern "C" {
          CobbBugFixes::Patches::UnderwaterAmbienceCellBoundaryFix::Apply();
          CobbBugFixes::Patches::VampireFeedSoftlock::Apply();
          CobbBugFixes::Patches::NPCTorchLandscapeFix::Apply();
+         CobbBugFixes::Patches::CrashFixes::Apply();
       }
       {  // Serialization
          g_serialization->SetUniqueID(g_pluginHandle, g_serializationID);

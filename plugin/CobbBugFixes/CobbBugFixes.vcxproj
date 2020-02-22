@@ -188,6 +188,7 @@ ItemList = new Microsoft.Build.Framework.ITaskItem[0];
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Patches\ArcheryDownwardArrowFix.cpp" />
     <ClCompile Include="Patches\ArmorAddonMO5SFix.cpp" />
+    <ClCompile Include="Patches\CrashFixes.cpp" />
     <ClCompile Include="Patches\Exploratory.cpp" />
     <ClCompile Include="Patches\ExploratoryPatches\ArcheryBug.cpp" />
     <ClCompile Include="Patches\ExploratoryPatches\ModelLoadingTest.cpp" />
@@ -206,6 +207,7 @@ ItemList = new Microsoft.Build.Framework.ITaskItem[0];
   <ItemGroup>
     <ClInclude Include="Patches\ArcheryDownwardArrowFix.h" />
     <ClInclude Include="Patches\ArmorAddonMO5SFix.h" />
+    <ClInclude Include="Patches\CrashFixes.h" />
     <ClInclude Include="Patches\Exploratory.h" />
     <ClInclude Include="Patches\ExploratoryPatches\ArcheryBug.h" />
     <ClInclude Include="Patches\ExploratoryPatches\ModelLoadingTest.h" />

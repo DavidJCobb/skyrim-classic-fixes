@@ -13,6 +13,8 @@ namespace CobbBugFixes {
       COBBBUGFIXES_MAKE_INI_SETTING(MerchantRestockFixes, Enabled, true);
       COBBBUGFIXES_MAKE_INI_SETTING(NPCTorchLandscapeFix, Enabled, true);
       COBBBUGFIXES_MAKE_INI_SETTING(UnderwaterAmbienceCellBoundaryFix, Enabled, true);
+      //
+      COBBBUGFIXES_MAKE_INI_SETTING(CrashFixes, TESIdleFormDestructor, true);
    };
    #undef COBBBUGFIXES_MAKE_INI_SETTING
    //

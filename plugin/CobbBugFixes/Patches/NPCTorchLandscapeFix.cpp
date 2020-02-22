@@ -50,7 +50,7 @@ namespace CobbBugFixes {
          void Apply() {
             if (CobbBugFixes::INI::NPCTorchLandscapeFix::Enabled.bCurrent == false)
                return;
-            WriteRelCall(0x0049E00D, (UInt32)&Outer); // use a call since there are no registers available to jump back with
+            WriteRelCall(0x0049E00D, (UInt32)&Outer); // use a call since there are no registers available to jump back with // circa TESObjectLIGH::sub0049DC10+3FF
             SafeWrite8(0x0049E00D + 5, 0x90); // this NOP is REQUIRED since we're using a call
          }
       }
