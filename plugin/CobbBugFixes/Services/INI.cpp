@@ -12,6 +12,7 @@ namespace CobbBugFixes {
       //
       #define COBBBUGFIXES_MAKE_INI_SETTING(category, name, value) namespace category { extern INISetting name = INISetting(#name, #category, value); };
       //
+      COBBBUGFIXES_MAKE_INI_SETTING(ActiveEffectTimerFixes, Enabled, true);
       COBBBUGFIXES_MAKE_INI_SETTING(CrashLogging, Enabled, false);
       COBBBUGFIXES_MAKE_INI_SETTING(MerchantRestockFixes, Enabled, true);
       COBBBUGFIXES_MAKE_INI_SETTING(NPCTorchLandscapeFix, Enabled, true);
