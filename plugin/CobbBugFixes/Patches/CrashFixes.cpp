@@ -5,6 +5,31 @@
 namespace CobbBugFixes {
    namespace Patches {
       namespace CrashFixes {
+         namespace Singleton012E2CF8_Unk68_Subroutine006483F0 {
+            //
+            // Sometimes, this singleton can be deleted, but the following call still 
+            // gets made for... I don't know what reason... during shutdown.
+            //
+            //    (*(0x012E640C))->unk68.sub006483F0(eax);
+            //
+            // Per our crash logs, the bad call is coming from ~BSFaceGenAnimationData().
+            //
+            __declspec(naked) void Outer() {
+               _asm {
+                  cmp  ebp, 0x00000068; // if the singleton is nullptr, then &singleton->unk68 == offsetof(decltype(singleton), unk68)
+                  je   lReturn;
+                  cmp  eax, 0x30000001;
+                  mov  edx, 0x0064840D;
+                  jmp  edx;
+               lReturn:
+                  mov  edx, 0x0064847B;
+                  jmp  edx;
+               }
+            }
+            void Apply() {
+               WriteRelJump(0x00648408, (UInt32)&Outer);
+            }
+         }
          namespace TESIdleFormDestructor {
             //
             // TESIdleForm::~TESIdleForm loops over the contents of the array TESIdleForm::unk20. 
@@ -35,6 +60,7 @@ namespace CobbBugFixes {
          }
          //
          void Apply() {
+            Singleton012E2CF8_Unk68_Subroutine006483F0::Apply();
             TESIdleFormDestructor::Apply();
          }
       }
