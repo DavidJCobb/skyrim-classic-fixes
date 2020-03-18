@@ -19,13 +19,14 @@
 #include "Patches/CrashFixes.h"
 #include "Patches/ActiveEffectTimerBugs.h"
 #include "Patches/ModArmorWeightPerk.h"
+#include "Patches/TrainerFixes.h"
 
 PluginHandle			       g_pluginHandle   = kPluginHandle_Invalid;
 SKSEMessagingInterface*     g_ISKSEMessaging = nullptr;
 SKSESerializationInterface* g_serialization  = nullptr;
 
 static const char* g_pluginName = "CobbBugFixes";
-const UInt32 g_pluginVersion   = 0x01050100; // 0xAABBCCDD = AA.BB.CC.DD with values converted to decimal // major.minor.update.internal-build-or-zero
+const UInt32 g_pluginVersion   = 0x01060000; // 0xAABBCCDD = AA.BB.CC.DD with values converted to decimal // major.minor.update.internal-build-or-zero
 const UInt32 g_serializationID = 'cBug';
 
 void Callback_Messaging_SKSE(SKSEMessagingInterface::Message* message);
@@ -118,6 +119,7 @@ extern "C" {
          CobbBugFixes::Patches::CrashFixes::Apply();
          CobbBugFixes::Patches::ActiveEffectTimerBugs::Apply();
          CobbBugFixes::Patches::ModArmorWeightPerk::Apply();
+         CobbBugFixes::Patches::TrainerFixes::Apply();
       }
       {  // Serialization
          g_serialization->SetUniqueID(g_pluginHandle, g_serializationID);

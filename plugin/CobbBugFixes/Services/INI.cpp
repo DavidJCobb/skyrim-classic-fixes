@@ -18,6 +18,7 @@ namespace CobbBugFixes {
       COBBBUGFIXES_MAKE_INI_SETTING(ModArmorWeightPerk, FixInitial, true);
       COBBBUGFIXES_MAKE_INI_SETTING(ModArmorWeightPerk, FixStacks, true);
       COBBBUGFIXES_MAKE_INI_SETTING(NPCTorchLandscapeFix, Enabled, true);
+      COBBBUGFIXES_MAKE_INI_SETTING(TrainerFixes, FixCostUI, true);
       COBBBUGFIXES_MAKE_INI_SETTING(UnderwaterAmbienceCellBoundaryFix, Enabled, true);
       //
       COBBBUGFIXES_MAKE_INI_SETTING(CrashFixes, TESIdleFormDestructor, true);

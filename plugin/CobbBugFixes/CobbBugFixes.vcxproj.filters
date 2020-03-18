@@ -69,6 +69,9 @@
     <ClCompile Include="Patches\ModArmorWeightPerk.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Patches\TrainerFixes.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def">
@@ -128,6 +131,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Patches\ModArmorWeightPerk.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Patches\TrainerFixes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
