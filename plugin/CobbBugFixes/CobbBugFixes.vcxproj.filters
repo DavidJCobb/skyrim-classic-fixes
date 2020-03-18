@@ -66,6 +66,9 @@
     <ClCompile Include="Patches\ActiveEffectTimerBugs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Patches\ModArmorWeightPerk.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def">
@@ -122,6 +125,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Patches\ActiveEffectTimerBugs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Patches\ModArmorWeightPerk.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -16,6 +16,7 @@ namespace CobbBugFixes {
                bool   unk0B = true;
             };
             DEFINE_SUBROUTINE(UInt32, Subroutine00AF5820_MaybeLoadModel, 0x00AF5820, const char* path, NiPointer<NiNode>& out, LoadModelOptions& options);
+            // another subroutine with the same signature seems to be used for load screens: 0x00AF5680
 
             constexpr char* ce_filePath = "Dungeons/Dwemer/Animated/DweButton/DweButton01.nif";
 
