@@ -4,6 +4,7 @@
 #include "ReverseEngineered/Forms/Actor.h"
 #include "ReverseEngineered/Forms/TESForm.h"
 #include "ReverseEngineered/ExtraData.h"
+#include "ReverseEngineered/Systems/Inventory.h"
 
 #include "Services/INI.h"
 

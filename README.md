@@ -1,8 +1,8 @@
 # skyrim-classic-fixes
 A DLL that fixes engine-level bugs in Skyrim Classic.
 
-This DLL depends on [the Shared Items Project I use for my reverse-engineered findings](https://github.com/DavidJCobb/skyrim-classic-re). In order to get the solution and project to load properly, you will need to *either* copy that entire repo (incluidng the ReverseEngineered folder) into this mod's project folder, *or* manually edit the files (current.sln and CobbBugFixes.vcxproj) and fix up the file paths for the shared project. Visual Studio 2015 will not allow you to do this through the GUI; it refuses to load anything that has incorrect paths, but also refuses to allow you to tell it where the missing files are. I apologize for the inconvenience; doing things this way will allow me to consolidate all of my reverse-engineered code so that I don't end up with multiple copies that have fallen out of synch, and it would be a perfectly viable approach were Visual Studio even a little less brittle.
+This DLL depends on [the repo I use for my reverse-engineered findings](https://github.com/DavidJCobb/skyrim-classic-re).
 
-SKSE source code and project files are not included.
+SKSE source code and project files ("skse" and "common") are not included except where necessary in order to compile in C++17 or in newer versions of MSVC. SKSE licensing terms apply to the included files.
 
 This mod is licensed under CC BY-NC-SA 4.0 except as noted in other files (e.g. if I make a helper function CC0 or something, I'll chuck a comment in there to let you know).

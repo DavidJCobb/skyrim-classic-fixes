@@ -98,8 +98,8 @@ namespace CobbBugFixes {
 
          namespace ManageTimer {
             void _stdcall Inner(float set_to) {
-               float& existing = *RE::g_globalActorTimer;
-               float  delta    = set_to - existing;
+               const float& existing = *RE::g_globalActorTimer;
+               float delta = set_to - existing;
                if (delta == 0.0F)
                   return;
                if (delta < 0.0F) {

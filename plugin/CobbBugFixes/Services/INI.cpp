@@ -14,6 +14,7 @@ namespace CobbBugFixes {
       //
       COBBBUGFIXES_MAKE_INI_SETTING(ActiveEffectTimerFixes, Enabled, true);
       COBBBUGFIXES_MAKE_INI_SETTING(CrashLogging, Enabled, false);
+      COBBBUGFIXES_MAKE_INI_SETTING(CrashLogging, StackCount, UInt32(40));
       COBBBUGFIXES_MAKE_INI_SETTING(MerchantRestockFixes, Enabled, true);
       COBBBUGFIXES_MAKE_INI_SETTING(ModArmorWeightPerk, FixInitial, true);
       COBBBUGFIXES_MAKE_INI_SETTING(ModArmorWeightPerk, FixStacks, true);

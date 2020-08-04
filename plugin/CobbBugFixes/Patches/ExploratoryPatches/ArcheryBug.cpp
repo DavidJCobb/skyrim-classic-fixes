@@ -1,8 +1,8 @@
 #pragma 
 #include "ReverseEngineered/Forms/Actor.h"
 #include "ReverseEngineered/Forms/Projectile.h"
+#include "ReverseEngineered/NetImmerse/nodes.h"
 #include "ReverseEngineered/NetImmerse/types.h"
-#include "skse/NiNodes.h"
 #include "skse/SafeWrite.h"
 
 //
@@ -26,14 +26,14 @@ namespace CobbBugFixes {
                   auto actorNode = actor->GetNiNode();
                   if (actorNode) {
                      _MESSAGE(" - Actor node-70: %s", actorNode->m_name);
-                     p = actorNode->m_worldTransform.pos;
+                     p = actorNode->worldTransform.pos;
                      _MESSAGE(" - Actor node-70 position: (%f, %f, %f)", p.x, p.y, p.z);
                   }
                   //
                   actorNode = actor->Unk_8D();
                   if (actorNode) {
                      _MESSAGE(" - Actor node-8D: %s", actorNode->m_name);
-                     p = actorNode->m_worldTransform.pos;
+                     p = actorNode->worldTransform.pos;
                      _MESSAGE(" - Actor node-8D position: (%f, %f, %f)", p.x, p.y, p.z);
                   }
                }

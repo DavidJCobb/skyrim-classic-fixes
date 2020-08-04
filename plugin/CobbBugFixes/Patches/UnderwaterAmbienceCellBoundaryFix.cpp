@@ -1,6 +1,7 @@
 #include "UnderwaterAmbienceCellBoundaryFix.h"
 #include "ReverseEngineered/Forms/TESObjectCELL.h"
 #include "ReverseEngineered/Forms/TESWorldSpace.h"
+#include "ReverseEngineered/NetImmerse/nodes.h"
 #include "ReverseEngineered/Player/PlayerCharacter.h"
 #include "ReverseEngineered/Systems/TESCamera.h"
 #include "skse/SafeWrite.h"
@@ -57,7 +58,7 @@ namespace CobbBugFixes {
                RE::NiPoint3 pos(player->pos);
                {
                   if (camera->cameraNode) {
-                     pos = camera->cameraNode->m_worldTransform.pos;
+                     pos = camera->cameraNode->worldTransform.pos;
                   } else {
                      //
                      // This is accurate in some cases and WILDLY inaccurate in other 
