@@ -1,5 +1,6 @@
 #include "CrashLog.h"
 #include "CrashLogDefinitions.h"
+#include "Patches/DetectShutdown.h"
 #include <algorithm> // std::min
 #include <cstdint>
 #include <psapi.h>  // MODULEINFO, GetModuleInformation
@@ -8,6 +9,7 @@
 #include <vector>
 #include "helpers/rtti.h"
 #include "helpers/strings.h"
+#include "skse/GameAPI.h"
 
 #include "INI.h"
 
@@ -36,6 +38,8 @@ struct _module {
    inline bool contains_address(uint32_t a) const noexcept { return a >= this->base && a < this->end; }
    inline bool operator<(const _module& other) const noexcept { return this->base < other.base; }
    inline bool operator>(const _module& other) const noexcept { return this->base > other.base; }
+   //
+   inline bool is_base_game() const noexcept { return this->file == "TESV.exe"; }
 };
 using module_list_t = std::vector<_module>;
 
@@ -152,6 +156,54 @@ void _print_stack(uint32_t offset, uint32_t value, const module_list_t& modules)
    _MESSAGE(out.c_str());
 }
 
+bool _instruction_is_lock_add(const char* addr) {
+   if (IsBadReadPtr(addr, 2))
+      return false;
+   uint8_t b0 = *(uint8_t*)(addr + 0);
+   if (b0 == 0xF0) {
+      ++addr;
+      b0 = *(uint8_t*)(addr + 0);
+      if (IsBadReadPtr(addr + 1, 1))
+         return false;
+   }
+   if (b0 != 0x0F)
+      return false;
+   uint8_t b1 = *(uint8_t*)(addr + 1);
+   if (b1 != 0xC0 && b1 != 0xC1)
+      return false;
+   return true;
+}
+bool _is_smart_pointer_crash(PCONTEXT cr) {
+   if (!CobbBugFixes::Patches::DetectShutdown::is_shutting_down)
+      return false;
+   uint32_t eip = cr->Eip;
+   if (_instruction_is_lock_add((const char*)eip)) { // check for LOCK XADD by -1
+      uint8_t  first = *(uint8_t*)eip;
+      uint8_t* arg   = (uint8_t*) ((first == 0x0F) ? eip + 2 : eip + 3);
+      if (!IsBadReadPtr(arg, 1)) {
+         auto    b   = *arg;
+         uint8_t mod = b >> 6;         // indicates whether it's [target + something] and if so, the bytecount of (something)
+         uint8_t reg = b >> 3 & 0b111; // source
+         uint8_t r_m = b & 0b111;      // target
+         //
+         uint32_t operand = 0;
+         switch (reg) {
+            case 0b000: operand = cr->Eax; break;
+            case 0b001: operand = cr->Ecx; break;
+            case 0b010: operand = cr->Edx; break;
+            case 0b011: operand = cr->Ebx; break;
+            case 0b100: operand = cr->Esp; break; // should never happen
+            case 0b101: operand = cr->Ebp; break;
+            case 0b110: operand = cr->Esi; break;
+            case 0b111: operand = cr->Edi; break;
+         }
+         if (operand == 0xFFFFFFFF)
+            return true;
+      }
+   }
+   return false;
+}
+
 void _logCrash(EXCEPTION_POINTERS* info) {
    _MESSAGE("\n\nUnhandled exception (i.e. crash) caught!");
    std::vector<_module> modules;
@@ -187,17 +239,55 @@ void _logCrash(EXCEPTION_POINTERS* info) {
          _print_stack(i * 4, p, modules);
       } while (++i < CobbBugFixes::INI::CrashLogging::StackCount.uCurrent);
    }
+   _MESSAGE("\n");
    {  // Module debug.
-      _MESSAGE("\n");
       if (modules.size()) {
          bool found = false;
          for (auto& module : modules) {
             if (module.contains_address(eip)) {
                found = true;
-               _MESSAGE("GAME CRASHED AT INSTRUCTION Base+0x%08X IN MODULE: %s", (eip - module.base), module.name.c_str());
-               _MESSAGE("Please note that this does not automatically mean that that module is responsible. \n"
-                        "It may have been supplied bad data or program state as the result of an issue in \n"
-                        "the base game or a different DLL.");
+               if (module.file != "TESV.exe" && _is_smart_pointer_crash(info->ContextRecord)) {
+                  _MESSAGE("GAME CRASHED AT INSTRUCTION Base+0x%08X IN MODULE: %s", (eip - module.base), module.name.c_str());
+                  _MESSAGE("This appears to be a harmless smart pointer crash-on-exit, possibly caused by an \n"
+                           "SKSE DLL. Allow me to explain:\n\n"
+                           "One of the challenges that programmers have to deal with is memory management: we \n"
+                           "need to make sure that when we're done using some piece of data, we delete it and \n"
+                           "free up the memory it's using. The trick is to make sure that we don't forget to \n"
+                           "delete objects (a memory leak), or accidentally delete objects early (a crash), or \n"
+                           "accidentally delete something twice (a very hard-to-fix crash). One of the tricks \n"
+                           "that we have to deal with this challenge is a \"smart pointer.\" The basic concept is, \n"
+                           "we give the piece of data a \"reference count\" which indicates how many parts of our \n"
+                           "program are using the data, and we only ever refer to the data through \"smart \n"
+                           "pointers\" that automatically manage this reference count. When we create a smart \n"
+                           "pointer, it automatically increases the reference count. When we're done with a \n"
+                           "smart pointer and we throw it away, it automatically decreases the reference \n"
+                           "count... and if the reference count then hits zero, the smart pointer deletes the \n"
+                           "data. The smart pointer essentially says, \"If I die, and also all my friends are \n"
+                           "dead, then I'm takin' you with me!\"\n\n"
+                           "When SKSE DLLs try to use smart pointers to refer to Skyrim's game data, however, \n"
+                           "they can get tripped up when the game closes down. When Skyrim closes down, it \n"
+                           "doesn't painstakingly go through every single piece of data it's been working with \n"
+                           "to delete them one by one. Instead, it just takes the entire \"heap\" -- the entire \n"
+                           "memory space where game data is stored -- and deletes it all at once, and \"delete\" \n"
+                           "in this context means that Skyrim tells Windows, \"Hey, I'm done with this. It can \n"
+                           "be used for something else.\"\n\n"
+                           "Here's what happens when an SKSE DLL uses a smart pointer to refer to something on \n"
+                           "that heap. The SKSE DLL shuts down after Skyrim has thrown the heap away. The DLL's \n"
+                           "smart pointer doesn't know that the data it's keeping track of is gone, so it'll \n"
+                           "dutifully try to decrease the reference count; and since Skyrim has already told \n"
+                           "Windows that the memory at that location is no longer in use, Windows goes, \"Hold \n"
+                           "on, you're not supposed to be touching that,\" and a crash occurs.\n\n"
+                           "Since the crash is occurring after the game has almost fully shut down, it shouldn't \n"
+                           "interfere with gameplay, your savedata, etc.. It's a flaw in whatever DLL is causing \n"
+                           "it, but it's a harmless flaw. The fix would be for the SKSE DLL's author to add \n"
+                           "shutdown code, to painstakingly go through all of its smart pointers and safely \n"
+                           "clear them (i.e. throw them away without decreasing any reference counts).");
+               } else {
+                  _MESSAGE("GAME CRASHED AT INSTRUCTION Base+0x%08X IN MODULE: %s", (eip - module.base), module.name.c_str());
+                  _MESSAGE("Please note that this does not automatically mean that that module is responsible. \n"
+                           "It may have been supplied bad data or program state as the result of an issue in \n"
+                           "the base game or a different DLL.");
+               }
                break;
             }
          }
